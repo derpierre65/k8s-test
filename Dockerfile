@@ -1,6 +1,5 @@
 FROM php:8.0.15-fpm
 
-WORKDIR /var/www/html/
 COPY . /var/www/html/
 
 # Install depencencies
@@ -44,6 +43,6 @@ COPY /build/nginx/conf.d/default.conf /etc/nginx/sites-enabled/
 # install composer
 RUN php -r "readfile('http://getcomposer.org/installer');" | php -- --install-dir=/usr/bin/ --filename=composer
 
+WORKDIR /var/www/html/
 EXPOSE 80
-
 CMD ["/usr/local/bin/start"]
