@@ -3,26 +3,25 @@ FROM php:8.0.15-fpm
 # Install depencencies
 RUN apt-get update && apt-get install -y \
     git \
+    freetype libpng libjpeg-turbo freetype-dev libpng-dev libjpeg-turbo-dev \
     curl \
-    libpng-dev \
     libonig-dev \
     libxml2-dev \
     libzip-dev \
     zlib1g-dev \
     zip \
     unzip \
-    nginx \
-    php8-zip
+    nginx
 
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install PHP extensions
-RUN docker-php-ext-configure zip --with-libzip
-RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip sockets mysqli
-RUN docker-php-ext-install -j$(nproc) gd
-RUN docker-php-ext-configure sockets
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg
+RUN docker-php-ext-install -j$(nproc) gd
+
+RUN docker-php-ext-configure sockets
+RUN docker-php-ext-install pdo_mysql mysqli sockets mbstring exif pcntl bcmath gd zip
 
 # Install Redis & MongoDB PHP Extension
 RUN pecl install redis \
