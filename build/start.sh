@@ -1,6 +1,6 @@
 #!/bin/sh
 
-cd /var/www/html/
+cd /var/www/
 
 php composer install
 php artisan config:cache
