@@ -7,8 +7,8 @@ RUN apt-get update && apt-get install -y \
     libpng-dev \
     libonig-dev \
     libxml2-dev \
+    libzip-dev \
     zip \
-    unzip \
     unzip \
     nginx
 
@@ -16,19 +16,11 @@ RUN apt-get update && apt-get install -y \
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install PHP extensions
+RUN docker-php-ext-configure zip --with-libzip
 RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip sockets mysqli
-
-# Enable php extensions
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j$(nproc) gd \
-    && docker-php-ext-install bcmath \
-    && docker-php-ext-install exif \
-    && docker-php-ext-install pdo_mysql \
-    && docker-php-ext-install mysqli \
-    && docker-php-ext-install zip \
-	&& docker-php-ext-install sockets \
-	&& docker-php-ext-install pcntl \
-	&& docker-php-ext-configure sockets
+RUN docker-php-ext-install -j$(nproc) gd
+RUN docker-php-ext-configure sockets
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg
 
 # Install Redis & MongoDB PHP Extension
 RUN pecl install redis \
@@ -41,7 +33,7 @@ COPY build/start.sh /usr/local/bin/start
 COPY build/nginx/conf.d/default.conf /etc/nginx/sites-enabled/
 
 # install composer
-RUN php -r "readfile('http://getcomposer.org/installer');" | php -- --install-dir=/usr/bin/ --filename=composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 WORKDIR /var/www/html/
 EXPOSE 80
