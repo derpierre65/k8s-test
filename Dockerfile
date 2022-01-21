@@ -1,4 +1,4 @@
-FROM php:8.0.15-fpm-alpine
+FROM php:8.0.3-fpm-alpine
 
 # Install depencencies
 RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories \
