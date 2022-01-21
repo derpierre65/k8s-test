@@ -5,6 +5,8 @@ COPY . /var/www/
 # Install depencencies
 RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories \
     && apk update && apk upgrade && apk add --no-cache --virtual \
+	    .build-deps $PHPIZE_DEPS g++ make libstdc++ curl-dev openssl-dev pcre-dev pcre2-dev zlib-dev bash build-base libzip-dev \
+        freetype libpng libjpeg-turbo freetype-dev libpng-dev libjpeg-turbo-dev \
         php8-curl php8-mbstring php8-xml php8-zip php8-bcmath php8-intl php8-gd php8-pcntl \
         php8-pdo_mysql php8-sqlite3 php8-pecl-redis php8-pecl-mongodb \
         nginx \
@@ -12,9 +14,6 @@ RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/reposit
         git \
         imagemagick imagemagick-libs \
         bash
-
-#        .build-deps $PHPIZE_DEPS g++ make libstdc++ curl-dev openssl-dev pcre-dev pcre2-dev zlib-dev bash build-base libzip-dev \
-#        freetype libpng libjpeg-turbo freetype-dev libpng-dev libjpeg-turbo-dev \
 
 # Enable php extensions
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
