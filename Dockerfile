@@ -1,4 +1,4 @@
-FROM php:8.0.3-fpm-alpine
+FROM php:8.0.5-fpm-alpine
 
 # Install depencencies
 RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories \
@@ -50,8 +50,10 @@ RUN docker-php-source delete \
     && rm -rf /tmp/* /var/cache/apk/*
 
 COPY . /var/www/html/
+COPY build/supervisord/plain.conf /etc/supervisord_plain.conf
+COPY build/php/fpm.conf /usr/local/etc/php-fpm.d/www.conf
 COPY build/start.sh /usr/local/bin/start
-#COPY build/nginx/conf.d/default.conf /etc/nginx/sites-enabled/
+COPY build/nginx/conf.d/default.conf /etc/nginx/sites-enabled/
 
 RUN chmod 0550 /usr/local/bin/start
 
