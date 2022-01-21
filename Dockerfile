@@ -53,6 +53,7 @@ COPY . /var/www/html/
 COPY build/supervisord/plain.conf /etc/supervisord_plain.conf
 COPY build/php/fpm.conf /usr/local/etc/php-fpm.d/www.conf
 COPY build/start.sh /usr/local/bin/start
+COPY build/nginx/nginx.conf /etc/nginx/nginx.conf
 COPY build/nginx/conf.d/default.conf /etc/nginx/sites-enabled/
 
 RUN chmod 0550 /usr/local/bin/start
