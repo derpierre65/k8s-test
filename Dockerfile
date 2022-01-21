@@ -1,7 +1,5 @@
 FROM php:8.0.15-fpm
 
-COPY . /var/www/html/
-
 # Install depencencies
 RUN apt-get update && apt-get install -y \
     git \
@@ -38,7 +36,9 @@ RUN pecl install redis \
     && docker-php-ext-enable redis \
     && docker-php-ext-enable mongodb
 
-COPY /build/nginx/conf.d/default.conf /etc/nginx/sites-enabled/
+COPY . /var/www/html/
+COPY build/start.sh /usr/local/bin/start
+COPY build/nginx/conf.d/default.conf /etc/nginx/sites-enabled/
 
 # install composer
 RUN php -r "readfile('http://getcomposer.org/installer');" | php -- --install-dir=/usr/bin/ --filename=composer
