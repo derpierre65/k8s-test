@@ -8,9 +8,11 @@ RUN apt-get update && apt-get install -y \
     libonig-dev \
     libxml2-dev \
     libzip-dev \
+    zlib1g-dev \
     zip \
     unzip \
-    nginx
+    nginx \
+    php8-zip
 
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
