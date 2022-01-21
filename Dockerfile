@@ -1,20 +1,19 @@
-FROM php:8.0.15-fpm
+FROM php:8.0.15-fpm-alpine
 
 # Install depencencies
-RUN apt-get update && apt-get install -y \
+RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
+RUN apk update && apk add --no-cache --virtual \
     git \
     freetype libpng libjpeg-turbo freetype-dev libpng-dev libjpeg-turbo-dev \
     curl \
-    libonig-dev \
     libxml2-dev \
     libzip-dev \
-    zlib1g-dev \
     zip \
     unzip \
     nginx
 
 # Clear cache
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN #apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install PHP extensions
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg
@@ -28,6 +27,11 @@ RUN pecl install redis \
     && pecl install mongodb \
     && docker-php-ext-enable redis \
     && docker-php-ext-enable mongodb
+
+# clean up
+RUN docker-php-source delete \
+    && rm -rf /tmp/* /var/tmp/* \
+    && rm -rf /tmp/* /var/cache/apk/*
 
 COPY . /var/www/html/
 COPY build/start.sh /usr/local/bin/start
