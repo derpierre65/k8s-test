@@ -56,6 +56,7 @@ COPY build/start.sh /usr/local/bin/start
 COPY build/nginx/nginx.conf /etc/nginx/nginx.conf
 COPY build/nginx/conf.d/default.conf /etc/nginx/sites-enabled/
 
+RUN chown -R www-data:www-data /var/www/html
 RUN chmod 0550 /usr/local/bin/start
 
 WORKDIR /var/www/html/
