@@ -2,15 +2,27 @@ FROM php:8.0.15-fpm-alpine
 
 # Install depencencies
 RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
-RUN apk update && apk add --no-cache --virtual \
-    git \
-    freetype libpng libjpeg-turbo freetype-dev libpng-dev libjpeg-turbo-dev \
-    curl \
-    libxml2-dev \
-    libzip-dev \
-    zip \
-    unzip \
-    nginx
+#RUN apk update && apk add --no-cache --virtual \
+#    git \
+#    freetype libpng libjpeg-turbo freetype-dev libpng-dev libjpeg-turbo-dev \
+#    curl \
+#    libxml2-dev \
+#    libzip-dev \
+#    zip \
+#    unzip \
+#    nginx
+RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories \
+    && apk update && apk upgrade && apk add --no-cache --virtual \
+        .build-deps $PHPIZE_DEPS g++ make libstdc++ curl-dev openssl-dev pcre-dev pcre2-dev zlib-dev bash build-base libzip-dev \
+        freetype libpng libjpeg-turbo freetype-dev libpng-dev libjpeg-turbo-dev \
+        php8-curl php8-mbstring php8-xml php8-zip php8-bcmath php8-intl php8-gd php8-pcntl \
+        php8-pdo_mysql php8-sqlite3 php8-pecl-redis php8-pecl-mongodb \
+        nginx \
+        supervisor \
+        nodejs npm \
+        git \
+        imagemagick php8-dev imagemagick imagemagick-libs imagemagick-dev \
+        bash
 
 # Clear cache
 #RUN apt-get clean && rm -rf /var/lib/apt/lists/*
