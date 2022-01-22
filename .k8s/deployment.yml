@@ -16,13 +16,13 @@ spec:
         - env:
             - name: CONTAINER_ROLE
               value: app
-#          envFrom:
-#            - secretRef:
-#                name: laravel-env
-#                optional: false
-#            - configMapRef:
-#                name: laravel-env
-#                optional: false
+          envFrom:
+            - secretRef:
+                name: laravel-env
+                optional: false
+            - configMapRef:
+                name: laravel-env
+                optional: false
           image: localhost:32000/k8s-test
           imagePullPolicy: Always
           name: laravel-app
