@@ -2,11 +2,11 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: laravel-app
-  namespace: k8s-app
+  namespace: k8s
 spec:
   selector:
     matchLabels:
-      app: k8s-app
+      app: k8s
   template:
     spec:
       containers:
@@ -22,6 +22,6 @@ spec:
 #                optional: false
           image: localhost:32000/k8s-test
           imagePullPolicy: Always
-          name: k8s-app
-#          ports:
-#            - containerPort: 80
+          name: laravel-app
+          ports:
+            - containerPort: 80
