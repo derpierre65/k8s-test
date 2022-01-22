@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: laravel-app
+  namespace: k8s-app
+spec:
+  selector:
+    matchLabels:
+      app: k8s-app
+  template:
+    spec:
+      containers:
+        - env:
+            - name: CONTAINER_ROLE
+              value: octane
+#          envFrom:
+#            - secretRef:
+#                name: laravel-env
+#                optional: false
+#            - configMapRef:
+#                name: laravel-env
+#                optional: false
+          image: localhost:32000/k8s-test
+          imagePullPolicy: Always
+          name: k8s-app
+#          ports:
+#            - containerPort: 80
