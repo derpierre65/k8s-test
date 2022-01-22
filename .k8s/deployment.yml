@@ -3,16 +3,21 @@ kind: Deployment
 metadata:
   name: laravel-app
   namespace: k8s
+  labels:
+    app: k8s
 spec:
   selector:
     matchLabels:
       app: k8s
   template:
+    metadata:
+      labels:
+        app: k8s
     spec:
       containers:
         - env:
             - name: CONTAINER_ROLE
-              value: octane
+              value: app
 #          envFrom:
 #            - secretRef:
 #                name: laravel-env
