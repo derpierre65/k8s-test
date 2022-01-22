@@ -3,8 +3,6 @@ kind: Deployment
 metadata:
   name: laravel-app
   namespace: k8s
-  labels:
-    app: k8s
 spec:
   selector:
     matchLabels:
