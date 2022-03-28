@@ -4,6 +4,9 @@ metadata:
   name: k8s-service
   namespace: k8s
 spec:
+  type: ClusterIP
+  selector:
+    app: k8s
   ports:
     - protocol: TCP
       port: 80
