@@ -1,0 +1,53 @@
+name: Kubernetes Deployment
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deployment:
+    name: Deployment
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@master
+
+      - name: Generate short SHA
+        id: slug
+        run: echo "::set-output name=sha8::$(echo ${GITHUB_SHA} | cut -c1-8)"
+
+      - name: Cache - Cache Composer dependencies
+        uses: actions/cache@v2
+        with:
+          path: /tmp/composer-cache
+          key: ${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
+
+      - name: PHP - Install Dependencies
+        uses: php-actions/composer@v5
+        with:
+          dev: no
+          args: --no-interaction --no-scripts --no-progress --prefer-dist --ignore-platform-reqs --verbose --no-dev --optimize-autoloader
+
+      - name: Cleanup - Remove Auth Files
+        run: |
+          rm -rf auth.json
+          rm -rf .npmrc
+
+      - name: Docker - Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Docker - Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v3
+        with:
+          push: true
+          tags: derpierre65/k8s-test:latest

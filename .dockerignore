@@ -1,0 +1,10 @@
+storage/logs/*
+storage/framework/cache/*
+storage/framework/sesions/*
+storage/framework/testing/*
+storage/framework/views/*
+tests/*
+build/*
+.k8s/*
+.github/*
+.editorconfig

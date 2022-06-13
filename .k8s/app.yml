@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: laravel-app
+  namespace: k8s
+spec:
+  selector:
+    matchLabels:
+      app: k8s
+  template:
+    metadata:
+      labels:
+        app: k8s
+    spec:
+      containers:
+        - env:
+            - name: CONTAINER_ROLE
+              value: app
+          envFrom:
+            - secretRef:
+                name: laravel-env
+                optional: false
+            - configMapRef:
+                name: laravel-env
+                optional: false
+          image: localhost:32000/k8s-test
+          imagePullPolicy: Always
+          name: laravel-app
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: laravel-app-service
+  namespace: k8s
+spec:
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  selector:
+    app: k8s
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: k8s-ingress
+  namespace: k8s
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    cert-manager.io/issuer: "letsencrypt-staging" # "letsencrypt-prod"
+spec:
+  tls:
+  - hosts:
+      - k8s.derpierre65.de
+    secretName: k8s-tls
+  rules:
+    - host: k8s.derpierre65.de
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: laravel-app-service
+                port:
+                  number: 80

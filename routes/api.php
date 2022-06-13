@@ -14,6 +14,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('/get-redis/', function () {
+	return \Illuminate\Support\Facades\Redis::get('test-key') ?? 'null';
+});
+
+Route::get('/set-redis/', function () {
+	return \Illuminate\Support\Facades\Redis::set('test-key', (string) time());
+});
+
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+	return $request->user();
 });
