@@ -51,3 +51,9 @@ jobs:
         with:
           push: true
           tags: derpierre65/k8s-test:latest
+
+      - name: Deploy to Kubernetes
+        uses: steebchen/kubectl@v2.0.0
+        with:
+          config: ${{ secrets.KUBE_CONFIG_DATA }}
+          command: kubectl apply -f .k8s/app.yml
