@@ -9,6 +9,7 @@ cd /var/www/html/
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
+php artisan storage:link
 
 if [ "$ROLE" = "app" ]; then
   exec /usr/bin/supervisord -n -c "/etc/supervisord_plain.conf"

@@ -61,4 +61,5 @@ RUN chmod 0550 /usr/local/bin/start
 
 WORKDIR /var/www/html/
 EXPOSE 80
+
 CMD ["/usr/local/bin/start"]

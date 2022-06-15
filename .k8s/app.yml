@@ -4,6 +4,12 @@ metadata:
   name: laravel-app
   namespace: k8s
 spec:
+  revisionHistoryLimit: 5
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
   selector:
     matchLabels:
       app: k8s
@@ -11,9 +17,20 @@ spec:
     metadata:
       labels:
         app: k8s
+        commit_hash: CICD_GIT_COMMIT
     spec:
+      imagePullSecrets:
+        - name: docker-registry
       containers:
-        - env:
+        - name: laravel-app
+          image: derpierre65/k8s-test:latest
+          imagePullPolicy: Always
+          volumeMounts:
+            - mountPath: /var/www/html/storage/app/
+              name: storage-volume
+          ports:
+            - containerPort: 80
+          env:
             - name: CONTAINER_ROLE
               value: app
           envFrom:
@@ -23,11 +40,20 @@ spec:
             - configMapRef:
                 name: laravel-env
                 optional: false
-          image: localhost:32000/k8s-test
-          imagePullPolicy: Always
-          name: laravel-app
-          ports:
-            - containerPort: 80
+          startupProbe:
+            periodSeconds: 1
+            failureThreshold: 20
+            successThreshold: 1
+            timeoutSeconds: 1
+            httpGet:
+              scheme: HTTP
+              path: /
+              port: 80
+      volumes:
+        - name: storage-volume
+          hostPath:
+            path: /root/test/k8s-test.derpierre65.de/
+            type: Directory
 ---
 apiVersion: v1
 kind: Service
@@ -48,15 +74,16 @@ metadata:
   name: k8s-ingress
   namespace: k8s
   annotations:
-    kubernetes.io/ingress.class: "nginx"
-    cert-manager.io/issuer: "letsencrypt-prod"
+    kubernetes.io/ingress.class: traefik
+    cert-manager.io/cluster-issuer: letsencrypt-staging
+    traefik.ingress.kubernetes.io/router.middlewares: default-redirect-https@kubernetescrd
 spec:
   tls:
   - hosts:
-      - k8s.derpierre65.de
+      - k8s-test.derpierre65.de
     secretName: k8s-tls
   rules:
-    - host: k8s.derpierre65.de
+    - host: k8s-test.derpierre65.de
       http:
         paths:
           - path: /

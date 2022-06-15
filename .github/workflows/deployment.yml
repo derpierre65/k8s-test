@@ -49,11 +49,17 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v3
         with:
+          context: .
           push: true
           tags: derpierre65/k8s-test:latest
+          cache-from: type=registry,ref=derpierre65/k8s-test:buildcache
+          cache-to: type=registry,ref=derpierre65/k8s-test:buildcache,mode=max
 
-      - name: Deploy to Kubernetes
-        uses: steebchen/kubectl@v2.0.0
+      - name: Replace Commit Hash
+        run: sed -i 's/CICD_GIT_COMMIT/${{steps.slug.outputs.sha8}}/g' .k8s/app.yml
+
+      - uses: actions-hub/kubectl@master
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG_DATA }}
         with:
-          config: ${{ secrets.KUBE_CONFIG_DATA }}
-          command: kubectl apply -f .k8s/app.yml
+          args: apply -f .k8s/app.yml
